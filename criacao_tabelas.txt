@@ -1,0 +1,68 @@
+CREATE TABLE Projetos
+
+(
+  id int not null primary key, 
+  nome varchar (100), 
+  data_inicio datetime not null, 
+  data_fim datetime not null, 
+  id_usuario int not null foreign key REFERENCES Projetos
+
+);
+
+
+CREATE TABLE Usuarios 
+
+(
+  id int not null primary key, 
+  nome varchar (100) not null, 
+  login varchar (150) not null, 
+  id_ativo char(1) not null, 
+  id_sexo char(1) not null 
+);
+
+CREATE TABLE  Atividades 
+
+(
+  id int not null primary key,
+  nome varchar (100) not null, 
+  data_inicio datetime not null, 
+  data_fim datetime not null, 
+  id_projeto int not null foreign key REFERENCES Atividades, 
+  id_usuario int not null foreign key REFERENCES Atividades
+  
+ );
+
+ CREATE TABLE Sexo 
+ 
+ (
+
+  id char(1),
+  descricao varchar(20)
+ 
+  );
+
+  CREATE TABLE Ativo 
+  
+  (
+  
+  id char(1), 
+  descricao varchar(20)
+
+  );
+
+
+  CREATE TABLE Notas 
+  
+  (
+  
+  id_nota int not null primary key, 
+  id_atividade int not null foreign key REFERENCES Nota, 
+  nota1 char(2) not null, 
+  nota2 char(2) not null, 
+  nota3 char(2) not null, 
+  nota4 char(2) not null, 
+  nota_final char(2) not null
+  
+  );
+
+  

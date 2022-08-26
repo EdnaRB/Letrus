@@ -1,0 +1,124 @@
+USE Letrus
+
+-- Quais são todos os projetos com suas atividades;
+
+SELECT DISTINCT Projetos$.nome AS PROJETO
+               ,Atividades.nome AS ATIVIDADE
+FROM Projetos$
+INNER JOIN Atividades
+ON Atividades.id_projeto = Projetos$.id
+WHERE Projetos$.nome IS NOT NULL 
+
+
+--Todas as atividades do usuário “oescolhido@letrus.com” no ano de 2022
+
+SELECT Usuarios.nome AS USUARIO
+      ,Atividades.nome AS ATIVIDADES
+      ,YEAR(Atividades.data_inicio) AS ANO
+FROM Usuarios
+INNER JOIN Atividades
+ON Usuarios.id = Atividades.id_usuario
+WHERE YEAR(Atividades.data_inicio) = '2022' AND Usuarios.id = 100
+ORDER BY ANO
+
+
+-- Quantidade de atividades por projeto do ano 2021
+
+SELECT Projetos$.nome AS PROJETO
+       , COUNT(Atividades.nome) AS QTA_ATIVIDADE
+       , YEAR(Atividades.data_inicio) AS ANO
+FROM Projetos$
+INNER JOIN Atividades
+ON Atividades.id_projeto = Projetos$.id
+WHERE YEAR(Atividades.data_inicio) = '2021'AND Projetos$.nome IS NOT NULL  
+GROUP BY Projetos$.nome, YEAR(Atividades.data_inicio)
+ORDER BY QTA_ATIVIDADE DESC
+
+
+
+--Lista de atividades em ordem hierárquica do projeto "LetrusTIC”
+
+SELECT Projetos$.nome
+       ,Atividades.nome
+FROM Projetos$
+INNER JOIN Atividades
+ON Atividades.id_projeto = Projetos$.id
+WHERE Projetos$.nome = 'EM DR AUGUSTO MEIRA'
+
+
+-- Exclua o projeto “LetrusTIC”
+
+DELETE FROM Projetos$
+WHERE Projetos$.nome = 'EM DR AUGUSTO MEIRA'
+
+--Liste todos as pessoas que estão no projeto “Concurso de Redacao”
+
+SELECT  Projetos$.nome AS PROJETO
+       ,Usuarios.nome  AS ALUNOS
+FROM Projetos$
+INNER JOIN Usuarios
+ON Usuarios.id = Projetos$.id
+WHERE Projetos$.nome = 'CECILIA MEIRELES'
+
+
+-- Aumente o prazo final em 15 dias de todas as atividades do projeto
+--“Concurso de Redacao”
+
+SELECT Projetos$.nome AS PROJETO
+      ,Atividades.nome AS ATIVIDADE
+      ,Projetos$.data_fim AS DATA_FINAL
+      ,Projetos$.data_fim + 15 AS DATA_FINAL_PRORROGADA
+FROM Projetos$
+INNER JOIN Atividades
+ON Atividades.id_projeto = Projetos$.id
+
+
+
+-- Exclua todos as atividades do usuário “João 33”
+
+SELECT Usuarios.nome
+      ,Atividades.nome
+FROM Usuarios
+INNER JOIN Atividades
+ON Usuarios.id = Atividades.id_usuario
+WHERE Usuarios.id = 33
+
+DELETE FROM Atividades
+WHERE Atividades.nome = 'XPTO: 1-34'
+
+
+
+--Crei a tabela "endereco” e relacione com o a tabela usuário
+--1. Endereco (estado, cidade, bairro, rua, cep, numero)
+
+--Popule a tabela “endereco”
+
+CREATE TABLE Enderecos
+
+(
+  id int not null primary key, 
+  estado char (2) not null,
+  cidade varchar (50) not null,
+  bairro varchar (50) not null,
+  rua varchar (150) not null,
+  numero varchar (20) not null,
+  cep varchar (10) not null,
+  id_usuario int not null foreign key REFERENCES Enderecos
+
+  );
+
+
+-- Crie uma view que mostre todos os usuários que estão na cidade São Paulo
+--e a nota final esteja entre 7 e 10 pontos
+
+ SELECT Usuarios.nome
+       ,Enderecos.cidade
+       ,['Notas'].nota_final
+ FROM Usuarios
+ INNER JOIN Enderecos
+ ON Usuarios.id = Enderecos.id_usuario
+ INNER JOIN Atividades
+ ON Atividades.id_usuario = Enderecos.id_usuario
+ INNER JOIN ['Notas']
+ ON ['Notas'].id_atividade = Atividades.id
+ WHERE Enderecos.cidade = 'São Paulo' AND ['Notas'].nota_final >= 7
